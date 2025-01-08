@@ -137,6 +137,8 @@ module load Python/3.8.6-GCCcore-10.2.0
 m6anet-dataprep --eventalign event.txt --out_dir m6Anet --n_processes 30
 m6anet-run_inference --input_dir m6Anet --out_dir m6Anet --infer_mod_rate --n_processes 0
 ```
+The script Possibility_selection.py was used for selecting the modification that the possibility is higher than 95%  
+
 
 
 
