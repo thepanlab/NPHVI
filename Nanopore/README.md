@@ -31,8 +31,10 @@ https://github.com/lh3/minimap2
 minimap2 -ax splice -uf -k14 ref.fa direct-rna.fq > aln.sam
 ```
 ## Quality control
-Software: Marginalign  
+Software: Marginalign, samtools  
 https://github.com/benedictpaten/marginAlign  
+https://github.com/samtools/samtools  
+
 Build the virtual environment  
 ```
  module load Python/2.7.14-intel-2018a
