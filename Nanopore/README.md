@@ -66,6 +66,40 @@ marginAlign/scripts/substitutions _unique.fastq reference.fa _minimap_pass.sam o
 ```
 Using the script "substitution_plot.R" and "identityPlots.R" to visualize the results  
 
+Calculate the depth/coverage  
+```
+samtools view -b -F 4 Output_minimap.sam > aligned_minimap.bam
+```
+```
+samtools sort -o aligned_minimap_sorted.bam aligned_minimap.bam
+```
+```
+samtools index aligned_minimap_sorted.bam
+```
+```
+samtools depth aligned_minimap_sorted.bam > coverage.txt
+```
+Calculate the sum of coverage  
+```
+awk '{split($1, arr, "|"); ref_name = arr[1]; coverage[ref_name] += $3} END {for (ref in coverage) print ref, coverage[ref]}' coverage.txt > Sum_coverage.txt
+```
+Calculate the average coverage  
+```
+awk '{sum+=$3} END {print "Average Coverage = ", sum/NR}' coverage.txt > /Avg_coverage.txt
+```
+Calculate the Breadth of Coverage
+```
+samtools depth aligned_minimap_sorted.bam | awk '{if($3>0) covered++} END {print covered/1000*100 "%"}'  > Breadth_coverage.txt
+```
+
+
+
+
+
+
+
+
+
 
 
 
