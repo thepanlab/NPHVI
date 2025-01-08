@@ -1,0 +1,19 @@
+notes: Pairwise comparison without replicates with default parameter setting.
+
+data:
+    KO:
+        rep1: /ourdisk/hpc/rnafold/dywang/dont_archive/On_process/V45/sva549_2/Xpore
+        rep2: /ourdisk/hpc/rnafold/dywang/dont_archive/On_process/V45/s2_a549/Xpore
+        rep3: /ourdisk/hpc/rnafold/dywang/dont_archive/On_process/V45/c2_a549/Xpore
+    WT:
+        rep1: /ourdisk/hpc/rnafold/dywang/dont_archive/On_process/V45/mocka59/Xpore
+        rep2: /ourdisk/hpc/rnafold/dywang/dont_archive/On_process/V45/s1_a549/Xpore
+        rep3: /ourdisk/hpc/rnafold/dywang/dont_archive/On_process/V45/c1a549/Xpore
+    
+out: /ourdisk/hpc/rnafold/dywang/dont_archive/On_process/V45/Sidbers_m6A/Comp
+
+method:
+    prefiltering:
+        method: t-test
+        threshold: 0.1
+
