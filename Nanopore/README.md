@@ -147,6 +147,30 @@ xpore dataprep --eventalign event.txt --out_dir Xpore
 ```
 xpore diffmod --config config.yml
 ```
+## Isoform analysis
+Software: Flair  
+https://github.com/BrooksLabUCSC/flair  
+
+flair align  
+```
+flair align -g GRCh38.p14.genome.fa --nvrna -r fastq_file.fastq
+```
+flair correct
+```
+flair correct -q flair.aligned.bed -f gencode.v45.annotation.gtf -g GRCh38.p14.genome.fa
+```
+flair collapse
+```
+flair collapse -g GRCh38.p14.genome.fa
+               --gtf gencode.v45.annotation.gtf
+               -q flair_all_corrected.bed
+               -r fastq_file.fastq
+               --stringent
+               --check_splice
+               --generate_map
+               --annotation_reliant generate
+```
+
 
 
 
