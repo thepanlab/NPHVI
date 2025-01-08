@@ -1,4 +1,5 @@
 # A pipline to analyze nanopore direct RNA sequencing data
+Gencode_v45 was used as the humance genome and transcriptome reference
 ## Basecalling
 Software: Guppy  
 https://timkahlke.github.io/LongRead_tutorials/BS_G.html  
@@ -25,6 +26,9 @@ cat *.fastq > all.fastq
 ```
 ## Alignment
 Software: Minimap2  
-https://github.com/lh3/minimap2  
+https://github.com/lh3/minimap2    
+```
+minimap2 -ax splice -uf -k14 ref.fa direct-rna.fq > aln.sam
+```
 
 
