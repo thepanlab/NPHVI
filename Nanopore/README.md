@@ -120,6 +120,18 @@ nanopolish eventalign --scale-events --signal-index --threads 50
 --summary sequencing_summary.txt
 > event.txt
 ```
+## polyA length calculation
+Software: Nanopolish  
+```
+nanopolish polya -t8 -r fastq_file.fastq -b aligned_minimap_sorted.bam -g gencode.v45.transcripts.fa > polyA_length.txt
+```
+Selected the results with"pass"
+```
+grep 'PASS' polyA_length.txt > passed_polyA.txt
+```
+
+
+
 
 
 
