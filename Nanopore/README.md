@@ -99,6 +99,29 @@ samtools idxstats aligned_minimap_sorted.bam > Count.txt
 ```
 awk 'BEGIN {FS="\t"; OFS="\t"} {if($3>0) print $0, ($3/$2)*1000000}' Count.txt > TPM.txt
 ```
+## Segmentation
+Software: Nanopolish
+https://github.com/jts/nanopolish  
+```
+module load Eigen/3.2.9-intel-2016a
+module load HTSlib/1.9-foss-2018b
+export HDF5_PLUGIN_PATH=/ourdisk/hpc/rnafold/dywang/dont_archive/Software/ont-vbz-hdf-plugin-1.0.1-Linux/usr/local/hdf5/lib/plugin
+```
+Index
+```
+nanopolish index -d directory_fast5 -s sequencing_summary.txt fastq_file.fastq
+```
+Segmentation  
+```
+nanopolish eventalign --scale-events --signal-index --threads 50
+--reads fastq_file.fastq
+--bam aligned_minimap_sorted.bam
+--genome gencode.v45.transcripts.fa
+--summary sequencing_summary.txt
+> event.txt
+```
+
+
 
 
 
