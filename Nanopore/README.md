@@ -85,11 +85,11 @@ awk '{split($1, arr, "|"); ref_name = arr[1]; coverage[ref_name] += $3} END {for
 ```
 Calculate the average coverage  
 ```
-awk '{sum+=$3} END {print "Average Coverage = ", sum/NR}' coverage.txt > /Avg_coverage.txt
+awk '{sum+=$3} END {print "Average Coverage = ", sum/NR}' coverage.txt > Avg_coverage.txt
 ```
 Calculate the Breadth of Coverage
 ```
-samtools depth aligned_minimap_sorted.bam | awk '{if($3>0) covered++} END {print covered/1000*100 "%"}'  > Breadth_coverage.txt
+samtools depth aligned_minimap_sorted.bam | awk '{if($3>0) covered++} END {print covered/1000*100 "%"}' > Breadth_coverage.txt
 ```
 
 
