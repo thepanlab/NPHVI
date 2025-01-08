@@ -91,6 +91,16 @@ Calculate the Breadth of Coverage
 ```
 samtools depth aligned_minimap_sorted.bam | awk '{if($3>0) covered++} END {print covered/1000*100 "%"}' > Breadth_coverage.txt
 ```
+## Calculate transcripts abundance (TPM)
+Software: samtools
+```
+samtools idxstats aligned_minimap_sorted.bam > Count.txt
+```
+```
+awk 'BEGIN {FS="\t"; OFS="\t"} {if($3>0) print $0, ($3/$2)*1000000}' Count.txt > TPM.txt
+```
+
+
 
 
 
