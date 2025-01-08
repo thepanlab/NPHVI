@@ -1,5 +1,5 @@
 # NPHVI
-The workflow to use Nanopore direct RNA sequencing and Proteomics to study the Human cell and Virus Interactions.
+The workflow for using Nanopore direct RNA sequencing and proteomics to study human cell and virus interactions.
 
 ## Experimental design & Data information
 The A459 cell line was cultivated and divided into two groups; one group was treated with Sindbis virus. The cell cultures were collected to extract RNA for Nanopore direct RNA sequencing, as well as IVT data. Protein was also extracted for proteomics. Each culture included three biological replicates.
