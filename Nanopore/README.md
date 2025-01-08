@@ -30,5 +30,30 @@ https://github.com/lh3/minimap2
 ```
 minimap2 -ax splice -uf -k14 ref.fa direct-rna.fq > aln.sam
 ```
+## Quality control
+Software: Marginalign  
+https://github.com/benedictpaten/marginAlign  
+Build the virtual environment  
+```
+ module load Python/2.7.14-intel-2018a
+ cd marginAlign
+ make clean
+ make
+ virtualenv --python=python2.7 --no-site-packages --distribute env && source env/bin/activate && pip install -r requirements.txt
+```
+To calculate the median/avg/min/max identity of reads in a sam file do
+```
+marginStats
+--localAlignment input.sam read.fastq
+reference.fasta
+--readIdentity
+--alignmentIdentity
+--readCoverage --mismatchesPerAlignedBase
+--deletionsPerReadBase
+--insertionsPerReadBase
+--readLength
+--printValuePerReadAlignment
+```
+
 
 
