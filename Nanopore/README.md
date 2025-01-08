@@ -1,5 +1,5 @@
 # A pipline to analyze nanopore direct RNA sequencing data
-The humance genome and transcriptome reference used Gencode_v45  
+The human genome and transcriptome reference used Gencode_v45  
 ## Basecalling
 Software: Guppy  
 https://timkahlke.github.io/LongRead_tutorials/BS_G.html  
@@ -129,6 +129,16 @@ Selected the results with"pass"
 ```
 grep 'PASS' polyA_length.txt > passed_polyA.txt
 ```
+## m6A modification identification
+Software: m6Anet  
+https://github.com/GoekeLab/m6anet
+```
+module load Python/3.8.6-GCCcore-10.2.0
+m6anet-dataprep --eventalign event.txt --out_dir m6Anet --n_processes 30
+m6anet-run_inference --input_dir m6Anet --out_dir m6Anet --infer_mod_rate --n_processes 0
+```
+
+
 
 
 
