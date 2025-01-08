@@ -170,6 +170,11 @@ flair collapse -g GRCh38.p14.genome.fa
                --generate_map
                --annotation_reliant generate
 ```
+flair quantify  
+```
+flair quantify -r reads_manifest.tsv -i flair.collapse.isoforms.fa --isoform_bed flair.collapse.isoforms.bed --stringent --generate_map
+```
+
 
 
 
