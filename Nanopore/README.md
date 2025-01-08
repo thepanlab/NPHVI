@@ -62,6 +62,7 @@ To calculate the substitution
 ```
 marginAlign/scripts/substitutions _unique.fastq reference.fa _minimap_pass.sam output_directory
 ```
+Using the script "substitution_plot.R" and "identityPlots.R" to visualize the results  
 
 
 
