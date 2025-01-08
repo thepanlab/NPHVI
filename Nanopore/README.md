@@ -41,7 +41,11 @@ Build the virtual environment
  make
  virtualenv --python=python2.7 --no-site-packages --distribute env && source env/bin/activate && pip install -r requirements.txt
 ```
-To calculate the median/avg/min/max identity of reads in a sam file do
+Before calculating by marginalign, unique the headers in the fastQ file is required (Script was provided in the Script folder)
+```
+uniquifyFastq input.fastQ input_unique_header
+```
+To calculate the median/avg/min/max identity of reads in a sam file
 ```
 marginStats
 --localAlignment input.sam read.fastq
@@ -54,6 +58,11 @@ reference.fasta
 --readLength
 --printValuePerReadAlignment
 ```
+To calculate the substitution  
+```
+marginAlign/scripts/substitutions _unique.fastq reference.fa _minimap_pass.sam output_directory
+```
+
 
 
 
