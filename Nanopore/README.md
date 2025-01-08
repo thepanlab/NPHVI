@@ -1,5 +1,5 @@
 # A pipline to analyze nanopore direct RNA sequencing data
-Gencode_v45 was used as the humance genome and transcriptome reference
+The humance genome and transcriptome reference used Gencode_v45  
 ## Basecalling
 Software: Guppy  
 https://timkahlke.github.io/LongRead_tutorials/BS_G.html  
