@@ -17,7 +17,11 @@ Using the following way to run jobs as array
    
    guppy_basecaller -i / _${SLURM_ARRAY_TASK_ID}.fast5 --save_path /fastQ_1 --config config.cfg
 ```
-Output: file.fastq, sequencing_summary.txt
+Output: file.fastq, sequencing_summary.txt  
+merge all the generated fastQ files together
+```
+cat *.fastq > all.fastq
+```
 ## Alignment
 Software: Minimap2  
 https://github.com/lh3/minimap2  
