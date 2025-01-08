@@ -7,6 +7,7 @@ The A459 cell line was cultivated and divided into two groups; one group was tre
 1. Nanopore data: Transcripts annotation & abundance, m6A modification, PolyA length, and alternative splicing (Number and type of isoform).
 2. Proteomics data: Protein annotation & abundance, PTM: Oxidation, Acetyl, Methyl, Phospho, Phospho Uridine, Phosphoadenosine.
 
-![image](https://github.com/user-attachments/assets/c9584c7e-c0f8-427c-a9ae-06e98f98d6b9)
+                            ![image](https://github.com/user-attachments/assets/a23213f2-91f4-4f7e-8c11-b10eabd09e11)
+
 
 
