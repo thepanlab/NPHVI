@@ -140,6 +140,7 @@ m6anet-run_inference --input_dir m6Anet --out_dir m6Anet --infer_mod_rate --n_pr
 The script Possibility_selection.py was used for selecting the modification that the possibility is higher than 95%  
 ## Compare the m6A modification  
 Software: Xpore  
+https://github.com/GoekeLab/xpore  
 ```
 xpore dataprep --eventalign event.txt --out_dir Xpore
 ```
