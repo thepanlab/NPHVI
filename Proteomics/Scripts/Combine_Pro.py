@@ -1,72 +1,120 @@
-import glob
+import os
 import pandas as pd
+from functools import reduce
 
-# Specify the path to your directory
-path = '/ourdisk/hpc/rnafold/dywang/dont_archive/On_process/V45/Sidbers/Proteome/Abundance/'  # Updated for the provided example file location
+# Directory with protein files
+directory = "/ourdisk/hpc/rnafold/dywang/dont_archive/On_process/V45/Sidbers/Proteome/Sindbis_Pro/Protein"
 
-# Get a list of all files in the directory
-files = glob.glob(path + '*.txt')
-files.sort()
+# Standard mapping: filename keyword → final column name
+sample_mapping = {
+    "ctrl1": "PSMs_ctrl1",
+    "ctrl2": "PSMs_ctrl2",
+    "ctrl3": "PSMs_ctrl3",
+    "S1": "PSMs_S1",
+    "S2": "PSMs_S2",
+    "S3": "PSMs_S3"
+}
 
-# Function to split records with multiple IDs and assign average totalPeakHeight
-def split_and_average(df):
-    rows = []
-    for _, row in df.iterrows():
-        ids = row['locus']
-        if isinstance(ids, str) and ids.startswith('{') and ids.endswith('}'):
-            ids = ids[1:-1].split(',')
-            num_ids = len(ids)
-            avg_peak_height = row['totalPeakHeight'] / num_ids
-            for single_id in ids:
-                new_row = row.copy()
-                new_row['locus'] = single_id.strip()
-                new_row['totalPeakHeight'] = avg_peak_height
-                rows.append(new_row)
-        else:
-            rows.append(row)
-    return pd.DataFrame(rows)
+# List to hold processed DataFrames
+dfs = []
 
-# Initialize final dataframe with columns for the desired output
-final_df = pd.DataFrame(columns=['locus', 'description'])
+# Process each .txt file in directory
+for filename in os.listdir(directory):
+    if filename.endswith(".txt"):
+        filepath = os.path.join(directory, filename)
 
-# Process each file and combine
-for file in files:
-    # Read the file into a DataFrame
-    df = pd.read_csv(file, sep='\t', comment='#')
-    
-    # Process to split records with multiple IDs and assign average totalPeakHeight
-    processed_df = split_and_average(df)
-    
-    # Summarize totalPeakHeight
-    summed_df = processed_df.groupby('locus').agg({
-        'totalPeakHeight': 'sum',
-        'description': 'first'  # Assume 'description' is the same for the same 'locus'
-    }).reset_index()
+        # Load only needed columns
+        df = pd.read_csv(filepath, sep='\t', quotechar='"',
+                         usecols=["Description", "Number of PSMs"])
 
-    # Get identifier from filename
-    parts = file.split("/")[-1].split(".")[0].split('_')
-    identifier = parts[1] + '_' + parts[2]
+        # Match filename to mapping
+        sample_name = os.path.splitext(filename)[0]
+        new_colname = None
+        for key, mapped in sample_mapping.items():
+            if key in sample_name:
+                new_colname = mapped
+                break
 
-    # Rename the 'totalPeakHeight' column
-    summed_df.rename(columns={'totalPeakHeight': f'total_Peak_Height_{identifier}'}, inplace=True)
+        if new_colname is None:
+            raise ValueError(f"Filename {filename} not recognized (needs ctrl1/2/3 or S1/2/3).")
 
-    # Merge the dataframes on locus and description
-    if final_df.empty:
-        final_df = summed_df
+        # Rename
+        df.rename(columns={"Number of PSMs": new_colname}, inplace=True)
+        dfs.append(df)
+
+# Merge on Description
+combined_df = reduce(lambda l, r: pd.merge(l, r, on="Description", how="outer"), dfs)
+
+# Fill missing with 0
+combined_df.fillna(0, inplace=True)
+
+# Ensure all standard columns exist (even if missing in input)
+for col in sample_mapping.values():
+    if col not in combined_df.columns:
+        combined_df[col] = 0
+
+# Save combined
+combined_output = os.path.join(directory, "/ourdisk/hpc/rnafold/dywang/dont_archive/On_process/V45/Sidbers/Proteome/Sindbis_Pro/combined_protein_psms.tsv")
+combined_df.to_csv(combined_output, sep='\t', index=False)
+print(f"Combined file saved to: {combined_output}")
+
+# --- Human vs Virus split ---
+def is_human(desc):
+    return isinstance(desc, str) and "ENSG" in desc and "ENST" in desc
+
+human_df = combined_df[combined_df["Description"].apply(is_human)].copy()
+virus_df = combined_df[~combined_df["Description"].apply(is_human)].copy()
+
+# Columns
+control_cols = ["PSMs_ctrl1", "PSMs_ctrl2", "PSMs_ctrl3"]
+treatment_cols = ["PSMs_S1", "PSMs_S2", "PSMs_S3"]
+
+# Filter: keep if ≥2 non-zero in control or treatment
+def keep_row(row):
+    control_nonzero = sum(row[c] != 0 for c in control_cols if c in row)
+    treatment_nonzero = sum(row[c] != 0 for c in treatment_cols if c in row)
+    return control_nonzero >= 2 or treatment_nonzero >= 2
+
+human_df = human_df[human_df.apply(keep_row, axis=1)].copy()
+
+# Normalize columns so each sums to mean of sums
+psm_cols = control_cols + treatment_cols
+col_sums = human_df[psm_cols].sum()
+mean_total = col_sums.mean()
+
+for col in psm_cols:
+    if col_sums[col] != 0:
+        human_df[col] = human_df[col] * (mean_total / col_sums[col])
     else:
-        final_df = pd.merge(final_df, summed_df, on=['locus', 'description'], how='outer')
+        human_df[col] = 0
 
-# Replace NA values with 0
-final_df = final_df.fillna(0)
+# Round to integer
+human_df[psm_cols] = human_df[psm_cols].round().astype(int)
 
-# Ensure 'description' is the second column
-columns = final_df.columns.tolist()
-columns.remove('description')
-columns.insert(1, 'description')
-final_df = final_df[columns]
+# --- Post-adjustment to fix rounding drift ---
+final_sums = human_df[psm_cols].sum()
+target_sum = int(round(mean_total))  # common target for all columns
 
-# Save the final DataFrame to a new text file with tab-separated values
-output_file_path_final = '/ourdisk/hpc/rnafold/dywang/dont_archive/On_process/V45/Sidbers/Proteome/combined_proteome.csv'
-final_df.to_csv(output_file_path_final, sep='\t', index=False)
+for col in psm_cols:
+    diff = target_sum - final_sums[col]
+    if diff > 0:
+        # add +1 to top 'diff' rows with largest values
+        idx = human_df[col].nlargest(diff).index
+        human_df.loc[idx, col] += 1
+    elif diff < 0:
+        # subtract -1 from top 'abs(diff)' rows with largest values
+        idx = human_df[col].nlargest(abs(diff)).index
+        human_df.loc[idx, col] -= 1
 
-print(f"Combined data saved to: {output_file_path_final}")
+# Reorder: Description, controls, treatments
+ordered_cols = ["Description"] + control_cols + treatment_cols
+human_df = human_df[ordered_cols]
+
+# Save outputs
+human_output = os.path.join(directory, "/ourdisk/hpc/rnafold/dywang/dont_archive/On_process/V45/Sidbers/Proteome/Sindbis_Pro/combined_human_protein_psms.tsv")
+human_df.to_csv(human_output, sep='\t', index=False)
+print(f"Filtered & normalized human protein file saved to: {human_output}")
+
+virus_output = os.path.join(directory, "/ourdisk/hpc/rnafold/dywang/dont_archive/On_process/V45/Sidbers/Proteome/Sindbis_Pro/combined_virus_protein_psms.tsv")
+virus_df.to_csv(virus_output, sep='\t', index=False)
+print(f"Virus protein file saved to: {virus_output}")
